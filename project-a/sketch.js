@@ -8,11 +8,11 @@ let clouds = [];
 let stars = []; 
 let raindrops = [];
 
-let tears = []; // Array to store multiple falling tears
-let pondLevel = 0; // Level of the tear pond (accumulation on the ground)
-let pondWidth = 0; // Horizontal radius of the tear pond (elliptical spread)
-let pondHeight = 0; // Vertical radius of the tear pond
-let tearTimer = 0; // Timer to control when a new tear falls
+let tears = []; 
+let pondLevel = 0;  
+let pondWidth = 0; 
+let pondHeight = 0;
+let tearTimer = 0; 
 
 let creatureVisible = false; // Track whether the creature is visible
 let noiseOffset = 0;
@@ -30,7 +30,6 @@ function setup() {
   let canvas = createCanvas(800, 400);
   canvas.id("p5-canvas");
   canvas.parent("p5-canvas-container");
-
   console.log("Tissues array:", tissues);
   // Generate random stars for night mode
   for (let i = 0; i < 50; i++) {
@@ -61,10 +60,10 @@ function setup() {
 function draw() {
   // Change background and add patterns when light is off
   if (lightOn) {
-    background(130,140,200);  // Normal background when light is on
+    background(240);  // Normal background when light is on
     drawHappyPattern();  // Add patterns indicating happiness
   } else {
-    background(50, 50, 50);  // Dark background when light is off
+    background(50, 100, 50);  // Dark background when light is off
     drawSadPattern();  // Add patterns indicating sadness
   }
 
