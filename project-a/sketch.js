@@ -1,3 +1,11 @@
+
+let letters = []; // Store letters with positions and transparency
+let letterOptions = ["i", "t", "s", "o", "k"]; // The possible letters
+
+let pondSize = 100; // Initial pond size
+let maxPondSize;    // Maximum pond size (full canvas)
+let startTime;      // Store the time when the sketch starts
+
 let lightOn = true;
 let blinkTimer = 0;
 let blinkInterval = 1000; // Faster blink interval (1 second)
@@ -5,14 +13,14 @@ let blinkDuration = 200; // Duration for each blink
 let lastBlinkTime = 0;
 let blinkState = false;
 let clouds = [];
-let stars = []; 
+let stars = [];
 let raindrops = [];
 
-let tears = []; 
-let pondLevel = 0;  
-let pondWidth = 0; 
-let pondHeight = 0;
-let tearTimer = 0; 
+let tears = []; // Array to store multiple falling tears
+let pondLevel = 0; // Level of the tear pond (accumulation on the ground)
+let pondWidth = 0; // Horizontal radius of the tear pond (elliptical spread)
+let pondHeight = 0; // Vertical radius of the tear pond
+let tearTimer = 0; // Timer to control when a new tear falls
 
 let creatureVisible = false; // Track whether the creature is visible
 let noiseOffset = 0;
@@ -25,25 +33,64 @@ let colorShift = 0; // Controls slow color transition
 
 let tissues = [];
 let draggingTissue = null;
+let tissueBox = { x: 700, y: 320, w: 80, h: 60 }; // Tissue box position and size
 
 function setup() {
+  //createCanvas(800, 400);
   let canvas = createCanvas(800, 400);
   canvas.id("p5-canvas");
   canvas.parent("p5-canvas-container");
   console.log("Tissues array:", tissues);
+  
+  maxPondSize = max(width, height) * 1.5; // Ensure full coverage
+  startTime = millis(); // Start the timer
+
   // Generate random stars for night mode
   for (let i = 0; i < 50; i++) {
-    stars.push({ x: random(width), y: random(height / 2), size: random(2, 2.1), flicker: random(50, 255) });
-     }
-  push()
-   // Generate random clouds for day mode
+    stars.push({
+      x: random(width),
+      y: random(height / 2),
+      size: random(2, 2.1),
+      flicker: random(50, 255),
+    });
+  }
+
+  // Generate random clouds for day mode
   for (let i = 0; i < 5; i++) {
     clouds.push({ x: random(width), y: random(50, 150), size: random(40, 80) });
   }
-  pop()
-  
-  push()
-   for (let i = 0; i < 5; i++) {
+
+  // Generate tissues inside the box
+  for (let i = 0; i < 3; i++) {
+    tissues.push({
+      x: tissueBox.x + random(10, 40),
+      y: tissueBox.y - random(20, 40),
+      w: random(30, 50),
+      h: random(20, 40),
+      offsetX: 0,
+      offsetY: 0,
+      beingDragged: false,
+    });
+  }
+
+  // Generate random stars for night mode
+  for (let i = 0; i < 50; i++) {
+    stars.push({
+      x: random(width),
+      y: random(height / 2),
+      size: random(2, 2.1),
+      flicker: random(50, 255),
+    });
+  }
+  push();
+  // Generate random clouds for day mode
+  for (let i = 0; i < 5; i++) {
+    clouds.push({ x: random(width), y: random(50, 150), size: random(40, 80) });
+  }
+  pop();
+
+  push();
+  for (let i = 0; i < 5; i++) {
     tissues.push({
       x: width - random(50, 100),
       y: height - random(50, 80),
@@ -54,17 +101,52 @@ function setup() {
       beingDragged: false,
     });
   }
-  pop()
+  pop();
 }
 
 function draw() {
+  
+    // Occasionally add a random letter near the creature
+  push()
+  fill(255, 0, 0)
+  if (random(1) < 0.02) {  // 2% chance per frame
+    let newLetter = {
+      char: random(letterOptions), 
+      x: 400 + random(-20, 20), 
+      y: 200 + random(-20, 20), 
+      alpha: 255 // Full opacity
+    };
+    letters.push(newLetter);
+  }
+
+  // Draw letters
+  for (let i = letters.length - 1; i >= 0; i--) {
+    fill(0, letters[i].alpha);
+    textSize(16);
+    text(letters[i].char, letters[i].x, letters[i].y);
+    
+    // Fade out
+    letters[i].alpha -= 2;
+    if (letters[i].alpha <= 0) {
+      letters.splice(i, 1); // Remove when invisible
+    }
+  }
+  pop()
+
+  let elapsedTime = millis() - startTime; // Time passed in milliseconds
+
+  // If 2 minutes (120,000 ms) have passed, start growing the pond
+  if (elapsedTime > 120000 && pondSize < maxPondSize) {
+    pondSize += 1; // Increase size gradually
+  }
+  
   // Change background and add patterns when light is off
   if (lightOn) {
-    background(240);  // Normal background when light is on
-    drawHappyPattern();  // Add patterns indicating happiness
+    background(90,100,255); // Normal background when light is on
+    drawHappyPattern(); // Add patterns indicating happiness
   } else {
-    background(50, 100, 50);  // Dark background when light is off
-    drawSadPattern();  // Add patterns indicating sadness
+    background(50, 50, 50); // Dark background when light is off
+    drawSadPattern(); // Add patterns indicating sadness
   }
 
   // Handle automatic blinking at a faster interval
@@ -86,49 +168,69 @@ function draw() {
   }
 
   if (!lightOn) {
-    drawTissues();
+    // Draw tissue box and tissues
+    drawTissueBox();
   }
-
 
   // If creature is visible, draw it
   if (creatureVisible) {
-    drawCreature(width / 2, height / 2)
-    fill(255,255,255)
-    textSize(35)
-    textStyle(BOLDITALIC)
-    text("You're sad, right?", 480,100)
+    drawCreature(width / 2 + 130, height / 2);
+    fill(255, 255, 255);
+    textSize(35);
+    textStyle(BOLDITALIC);
+    text("You're sad, right?", 480, 100);
+    drawTissues();
+    drawTissueBox(width / 2 + 130, height / 2);
   }
 }
 
+// Draw tissue box
+function drawTissueBox(x,y) {
+  push();
+ if(mouseX>=700 && mouseY>=300 && mouseY<=380){
+   drawHappyPattern()
+   let distanceToMouse = dist(mouseX, mouseY, x, y);
+  if (distanceToMouse < 80) {
+    x += random(-2, 2);
+    y += random(-2, 2); // 轻微抖动效果
+  }
+    fill(255, 255, 255);
+    textSize(35);
+    textStyle(BOLDITALIC);
+    fill(255);
+    text("You hurt me!", 520, 130);
+  }
+  pop();
+  fill(200, 100, 100);
+  stroke(150, 50, 50);
+  rect(tissueBox.x, tissueBox.y, tissueBox.w, tissueBox.h, 10);
+
+  // Tissue opening
+  fill(255);
+  rect(tissueBox.x + 20, tissueBox.y - 10, 40, 10, 5);
+}
+
+// Draw tissues
 function drawTissues() {
-  for (let tissue of tissues) {
-    fill(220);
-    stroke(180);
-    rect(tissue.x, tissue.y, tissue.w, tissue.h, 5);
-    
-    // Add a visual cue for the tissue being dragged
-    if (tissue.beingDragged) {
-      stroke(0, 255, 0);  // Green border for dragged tissue
-      noFill();
-      rect(tissue.x, tissue.y, tissue.w, tissue.h, 5);
-    }
-  }
+  push()
+  fill(255);
+  textSize(20);
+  text("tissues",710,308);
+  pop()
 }
-
-
+// Handle mouse pressed for tissue interaction
 function mousePressed() {
-  console.log("Mouse pressed at:", mouseX, mouseY);
-
+  if (dist(mouseX, mouseY, width / 2, height / 2) < radius) {
+    radius += 10;
+    setTimeout(() => {
+      radius -= 10;
+    }, 200); // 变大后恢复
+  }
   for (let tissue of tissues) {
-    console.log("Checking tissue at:", tissue.x, tissue.y, tissue.w, tissue.h); // Debugging
-
     let insideX = mouseX >= tissue.x && mouseX <= tissue.x + tissue.w;
     let insideY = mouseY >= tissue.y && mouseY <= tissue.y + tissue.h;
 
-    console.log("InsideX:", insideX, "InsideY:", insideY); // Debugging
-
     if (insideX && insideY) {
-      console.log("✅ Clicked on a tissue at:", tissue.x, tissue.y); // Debugging
       tissue.beingDragged = true;
       tissue.offsetX = mouseX - tissue.x;
       tissue.offsetY = mouseY - tissue.y;
@@ -136,38 +238,27 @@ function mousePressed() {
       return;
     }
   }
-}
 
-function mouseDragged() {
-  if (draggingTissue) {
-    draggingTissue.x = mouseX - draggingTissue.offsetX;
-    draggingTissue.y = mouseY - draggingTissue.offsetY;
-    console.log("Dragging tissue to:", draggingTissue.x, draggingTissue.y); // Debugging
+  // Check if clicking on pond
+  let d = dist(mouseX, mouseY, width / 4, height - 10);
+  if (d < pondWidth) {
+    creatureVisible = !creatureVisible;
   }
 }
 
-function mouseReleased() {
-  if (draggingTissue) {
-    draggingTissue.beingDragged = false;
-    draggingTissue = null;
-    console.log("Released tissue"); // Debugging
-  }
-
-
-  }
 function drawEye(x, y, size) {
   // White of the eye
   fill(255);
   noStroke(); // No stroke for the eye
   ellipse(x, y, size * 2, size);
-  
+
   // Pupil and iris
   fill(100, 0, 0);
   ellipse(x, y, size * 0.8, size * 0.8);
-  
+
   fill(0);
   ellipse(x, y, size * 0.3, size * 0.3);
-  
+
   // Light reflection
   fill(255);
   noStroke();
@@ -181,7 +272,7 @@ function drawEye(x, y, size) {
 
 function drawEyelid(x, y, size) {
   // Eyelid is now an ellipse that covers the eye fully (corrected orientation)
-  fill(230, 180, 150);  // More natural skin-like color
+  fill(230, 180, 150); // More natural skin-like color
   noStroke();
   ellipse(x, y - 20, size * 2, size); // Fully covers the white ellipse
 }
@@ -192,20 +283,34 @@ function drawFallingTears(x, y, size) {
     let tearSize = random(15, 25); // Varying size for the tears
 
     // Add new tears to the tears array for constant falling
-    tears.push({x: x - 30, y: y + 60, size: tearSize});
+    tears.push({ x: x - 30, y: y + 60, size: tearSize });
     tearTimer = millis(); // Update the timer
   }
 
   // Draw each tear individually falling down
   for (let i = 0; i < tears.length; i++) {
     let tear = tears[i];
-    
+
     // Shape of the tears (more like real tears)
     fill(0, 0, 255);
     beginShape();
     vertex(tear.x, tear.y);
-    bezierVertex(tear.x, tear.y + tear.size * 0.6, tear.x + tear.size * 0.5, tear.y + tear.size, tear.x + tear.size, tear.y + tear.size * 0.5);
-    bezierVertex(tear.x + tear.size * 0.5, tear.y - tear.size * 0.5, tear.x, tear.y - tear.size * 0.5, tear.x, tear.y);
+    bezierVertex(
+      tear.x,
+      tear.y + tear.size * 0.6,
+      tear.x + tear.size * 0.5,
+      tear.y + tear.size,
+      tear.x + tear.size,
+      tear.y + tear.size * 0.5
+    );
+    bezierVertex(
+      tear.x + tear.size * 0.5,
+      tear.y - tear.size * 0.5,
+      tear.x,
+      tear.y - tear.size * 0.5,
+      tear.x,
+      tear.y
+    );
     endShape(CLOSE);
 
     // Update the tear's position to fall vertically
@@ -213,17 +318,22 @@ function drawFallingTears(x, y, size) {
   }
 
   // Remove tears that have gone off the screen
-  tears = tears.filter(tear => tear.y < height - 30); // Keep them above the pond
+  tears = tears.filter((tear) => tear.y < height - 30); // Keep them above the pond
 }
 
 function accumulatePond() {
   // Accumulate the tears and create a pond on the ground (elliptical pond)
   noStroke();
-  fill(0, 0, 255, 100);  // Semi-transparent blue for the pond
+  fill(0, 0, 255, 100); // Semi-transparent blue for the pond
 
   // Loop through all tears to draw them on the ground
   for (let i = 0; i < tears.length; i++) {
-    ellipse(tears[i].x, tears[i].y + tears[i].size / 2, tears[i].size * 0.8, tears[i].size * 0.5);
+    ellipse(
+      tears[i].x,
+      tears[i].y + tears[i].size / 2,
+      tears[i].size * 0.8,
+      tears[i].size * 0.5
+    );
   }
 
   // Increase the pond's width and height as more tears fall
@@ -241,7 +351,7 @@ function accumulatePond() {
     vertex(xPos, yPos);
   }
   endShape(CLOSE);
-  
+
   // Limit the maximum size of the pond
   if (pondWidth > 100) {
     pondWidth = 100;
@@ -253,7 +363,7 @@ function accumulatePond() {
 
 // Key press to toggle light on/off
 function keyPressed() {
-  if (key === ' ') {
+  if (key === " ") {
     lightOn = !lightOn; // Toggle the light on/off with the space key
   }
 }
@@ -263,7 +373,14 @@ function drawHappyPattern() {
   noFill();
   stroke(255, 255, 0, 150); // Yellow color for happiness
   strokeWeight(3);
-  
+
+  push();
+  noStroke()
+  fill(255);
+  textSize(40);
+  text("What's in the SPACE?", 220, 340);
+  pop();
+
   // Draw moving clouds
   noStroke();
   fill(255, 255, 255, 180);
@@ -272,7 +389,7 @@ function drawHappyPattern() {
     cloud.x += 0.3; // Slow movement
     if (cloud.x > width + 50) cloud.x = -50; // Loop around
   }
-  
+
   // Draw complex sun rays with some variation
   for (let i = 0; i < 12; i++) {
     let angle = map(i, 0, 12, 0, TWO_PI);
@@ -326,10 +443,8 @@ function drawSadPattern() {
   noFill();
   stroke(0, 0, 255, 150); // Blue color for sadness
   strokeWeight(2);
-  
 
-  
-  push()
+  push();
   // Draw raindrops
   stroke(100, 100, 255, 200);
   strokeWeight(2);
@@ -340,10 +455,10 @@ function drawSadPattern() {
     line(drop.x, drop.y, drop.x, drop.y + drop.length);
     drop.y += 4; // Falling speed
   }
-  raindrops = raindrops.filter(drop => drop.y < height);
-  pop()
-  
-  push()
+  raindrops = raindrops.filter((drop) => drop.y < height);
+  pop();
+
+  push();
   // Draw stars with flickering effect
   noStroke();
   for (let star of stars) {
@@ -351,9 +466,9 @@ function drawSadPattern() {
     ellipse(star.x, star.y, star.size);
     star.flicker = random(50, 255); // Random flickering effect
   }
-  pop()
-  
-  push()
+  pop();
+
+  push();
   // Draw falling raindrops in varying sizes and speeds
   for (let i = 0; i < 10; i++) {
     let x = random(width);
@@ -361,8 +476,8 @@ function drawSadPattern() {
     let dropSize = random(10, 20);
     ellipse(x, y, dropSize, dropSize * 2);
   }
-  pop()
-  
+  pop();
+
   // Add misty swirls (sad abstract pattern)
   noFill();
   stroke(100, 100, 255, 100);
@@ -384,7 +499,7 @@ function mousePressed() {
   if (d < pondWidth) {
     creatureVisible = !creatureVisible;
   }
-  
+
   // Toggle expression of the creature when clicked
   let creatureD = dist(
     mouseX,
@@ -393,12 +508,17 @@ function mousePressed() {
     height / 2 + 30 * cos(angle * 2)
   );
   //if (creatureD < radius) {
-  //  isFriendly = !isFriendly; 
-    // Change the creature's expression
- // }
+  //  isFriendly = !isFriendly;
+  // Change the creature's expression
+  // }
 }
 
 function drawCreature(x, y) {
+  let distanceToMouse = dist(mouseX, mouseY, x, y);
+  if (distanceToMouse < 80) {
+    x += random(-2, 2);
+    y += random(-2, 2); // 轻微抖动效果
+  }
   // Gradually change wing color over time
   let r = 200 + 55 * sin(colorShift * 0.02);
   let g = 200 + 55 * sin(colorShift * 0.015);
