@@ -8,12 +8,12 @@ function setup() {
   canvas.parent("p5-canvas-container");
   sandBaseY = height - 100;
 
-  // Initialize sand heightmap
+ 
   for (let i = 0; i < width; i++) {
     sandHeight[i] = sandBaseY + noise(i * 0.02) * 20;
   }
 
-  // Generate petals
+
   for (let i = 0; i < 80; i++) {
     petals.push(new Petal());
   }
@@ -22,24 +22,23 @@ function setup() {
 function draw() {
   background(255, 240, 250);
 
-  // Update and draw falling petals
+  
   for (let i = petals.length - 1; i >= 0; i--) {
     let p = petals[i];
     p.update();
 
     let sx = constrain(floor(p.x), 0, width - 1);
     if (p.y >= sandHeight[sx]) {
-      // Petal hits sand and stops
+
       p.y = sandHeight[sx] - 2;
       settledPetals.push(p);
       petals.splice(i, 1);
-      petals.push(new Petal()); // Replace with new falling one
+      petals.push(new Petal()); 
     } else {
       p.show();
     }
   }
 
-  // Draw settled petals
   for (let p of settledPetals) {
     p.show();
   }
@@ -49,7 +48,7 @@ function draw() {
 
 function drawSand() {
   noStroke();
-  fill(237, 201, 175); // sand color
+  fill(237, 201, 175); 
   beginShape();
   vertex(0, height);
   for (let x = 0; x < width; x++) {
@@ -60,7 +59,6 @@ function drawSand() {
 }
 
 function mousePressed() {
-  // Depress sand at mouseX to make a hole
   let range = 30;
   for (let dx = -range; dx <= range; dx++) {
     let i = floor(mouseX + dx);
@@ -72,7 +70,7 @@ function mousePressed() {
   }
 }
 
-// Petal class
+
 class Petal {
   constructor() {
     this.reset();
