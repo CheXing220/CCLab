@@ -13,9 +13,22 @@ let worldHeight = 2000;
 let Ex = 2000;
 let Ey = 1000;
 
+let bgm;
+
+let lost;
+
+function preload(){
+  bgm = loadSound("assets/sounds/Jcy East - 星际穿越（钢琴版）.mp3")
+  lost = loadSound("assets/sounds/lost.m4a")
+}
+
 function setup() {
   let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
+  bgm.play();
+  if (!lost.isPlaying()) {
+    lost.play(); 
+  }
   stroke(255);
 
   for (let x = 0; x <= worldWidth; x += spacing) {
@@ -34,6 +47,8 @@ function setup() {
 function draw() {
   background(10);
 
+  console.log("...", verticalLines.length)
+
   push();
   translate(startX, startY);
 
@@ -44,20 +59,20 @@ function draw() {
   Ex+=random(-2,2)
   Ey-=random(-2,2)
 
-  for(let i = 0; i < verticalLines.length; i++){
-    verticalLines[i].update();
-    verticalLines[i].display();
-  }
+    for(let i = 0; i < verticalLines.length; i++){
+      verticalLines[i].update();
+      verticalLines[i].display();
+    }
 
-  for(let i = 0; i < horizontalLines.length; i++){
-    horizontalLines[i].update();
-    horizontalLines[i].display();
-  }
+    for(let i = 0; i < horizontalLines.length; i++){
+      horizontalLines[i].update();
+      horizontalLines[i].display();
+    }
 
-  for(let i = 0; i <diagonalLines.length; i++){
-    diagonalLines[i].update();
-    diagonalLines[i].display();
-  }
+    for(let i = 0; i <diagonalLines.length; i++){
+      diagonalLines[i].update();
+      diagonalLines[i].display();
+    }
 
   pop();
 
@@ -140,5 +155,17 @@ class DiagonalLine45 {
 
   display() {
     line(this.startX, worldHeight, this.startX + worldHeight, 0);
+  }
+}
+
+
+function mousePressed(){
+  let worldMouseX = mouseX - startX;
+  let worldMouseY = mouseY - startY;
+
+  let d = dist(worldMouseX, worldMouseY, Ex, Ey);
+
+  if (d < 15) {
+    window.location.href = "../1 red door";
   }
 }

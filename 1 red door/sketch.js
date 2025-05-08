@@ -1,29 +1,36 @@
-let door;
+let doorS;
 
 let doorHandlePressed = false;
 let openPercent = 0;
 
-let doorSound = false;
+
+let here;
+
+// let doorSound = false;
 
 // if (doorSound == true){
 //   door.play()
 // }
  
 function preload(){
-  door = loadSound ("assets/sounds/mixkit-scary-wooden-door-opening-190.wav")
+  doorS = loadSound ("assets/sounds/mixkit-scary-wooden-door-opening-190.wav")
+  here = loadSound ("assets/sounds/why.m4a")
 }
 
 function setup() {
   let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
+  if (!here.isPlaying()) {
+    here.play(); 
+  }
 }
 
 function draw() {
   background(0);
   Door();
-  if (doorSound == true){
-    door.play()
-  }
+  // if (doorSound == true){
+  //   doorS.play()
+  // }
 }
 
 
@@ -104,15 +111,19 @@ circle(circleX,circleY,dia)
 function mousePressed(){
   // door.play() = true
   let d= dist(mouseX,mouseY,290,250);
-   if (d<=15){
+   if (d<=15 &&!doorS.isPlaying()){
     doorHandlePressed = true;
-    // console.log("hi")
-    doorSound = true;
-    // door.play()
+    // // console.log("hi")
+    // doorSound = true;
+    doorS.play()
    }
+   if (mouseX >= 370 && mouseX <= 420 && mouseY >= 220 && mouseY <= 270) {
+       window.location.href = "../1 bookshelf"
+  }
 }
 
 function mouseReleased(){
   doorHandlePressed = false;
-  doorSound = false;
+  // doorSound = false;
+  // window.location.href = "../1 timetravel";
 }
