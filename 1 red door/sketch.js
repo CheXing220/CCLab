@@ -6,6 +6,9 @@ let openPercent = 0;
 
 let here;
 
+let bgm;
+
+
 // let doorSound = false;
 
 // if (doorSound == true){
@@ -15,6 +18,7 @@ let here;
 function preload(){
   doorS = loadSound ("assets/sounds/mixkit-scary-wooden-door-opening-190.wav")
   here = loadSound ("assets/sounds/why.m4a")
+  bgm = loadSound("assets/sounds/Cliff Martinez - Touch of Crude Part 1.mp3")
 }
 
 function setup() {
@@ -23,11 +27,18 @@ function setup() {
   if (!here.isPlaying()) {
     here.play(); 
   }
+  if (!bgm.isPlaying()) {
+    bgm.loop(); 
+  }
 }
 
 function draw() {
   background(0);
   Door();
+  // fill("white")
+  // rect(250,20,300,10)
+  // fill("grey")
+  // rect(250,22,circleX-250,8)
   // if (doorSound == true){
   //   doorS.play()
   // }
@@ -70,6 +81,11 @@ let circleX = map(openPercent,0,1,290,520); //290
 let circleY = map(openPercent,0,1,250,240);
 let dia = map(openPercent,0,1,30,0);
 circle(circleX,circleY,dia)
+
+fill("white")
+rect(250,20,240,10)
+fill("grey")
+rect(250,22,circleX-280,8)
  
 //  fill(random(0,255))
 //  rect(370,220,50,50)
@@ -116,6 +132,8 @@ function mousePressed(){
     // // console.log("hi")
     // doorSound = true;
     doorS.play()
+   }else{
+    !doorS.play()
    }
    if (mouseX >= 370 && mouseX <= 420 && mouseY >= 220 && mouseY <= 270) {
        window.location.href = "../1 bookshelf"

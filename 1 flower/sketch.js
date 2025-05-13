@@ -6,12 +6,16 @@ let sandPuffs = [];
 let sandMounds = [];
 let img1;
 let img2;
+let img3; 
+let bgm; 
 
 
 
 function preload(){
   img1 = loadImage("assets/94773005-light-blue-sky-with-clouds-oil-painting-background.jpg")
-  img2 = loadimage("assets/Tree+Brandch+2.png")
+  img2 = loadImage("assets/Tree+Brandch+2.png")
+  img3 = loadImage("assets/return-button-icon-13.jpg")
+  bgm = loadSound("assets/sounds/坂本龍一 - Energy Flow.mp3")
 }
 // let content = '花香渐渐消逝远去…… '
 // let yStart = 0;
@@ -28,9 +32,13 @@ function preload(){
 function setup() {
   let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
-  image(img1,0,0,width,height)
+  if (!bgm.isPlaying()) {
+    bgm.loop(); 
+  }
+  // image(img1,0,0,width,height)
+  // image(img2,0,0,width,height)
 
-  image(img1,0,0,width,height)
+  // image(img3,0,0,width,height)
   sandBaseY = height - 100;
   for (let i = 0; i < width; i++) {
     sandHeightMap[i] = sandBaseY + noise(i * 0.02) * 20;
@@ -45,7 +53,12 @@ function setup() {
 
 function draw() {
   background(255, 240, 250);
+
   image(img1,0,0,width,height)
+  image(img2,600,200,width/3.5,height/2)
+  image(img2,600,0,width/3.5,height/2)
+
+  image(img3,0,0,width/10,height/8.5)
 
 
 // if (millis() >= 5000){
@@ -85,6 +98,8 @@ function draw() {
 
   for (let mound of sandMounds) {
     mound.display();
+
+    image(img3,700,100,width/10,height/10)
   }
 
   drawSand();
@@ -265,5 +280,11 @@ class SandMound {
                petal.positionX < this.targetPositionX + radius &&
                petal.positionY >= sandHeightMap[x] - 2);
     });
+  }
+}
+
+function mousePressed(){
+  if(mouseX>=10 && mouseX <= 80 && mouseY >= 10 && mouseY <= 50){
+    window.location.href = "../1 bookshelf";
   }
 }

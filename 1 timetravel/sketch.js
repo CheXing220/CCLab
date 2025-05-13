@@ -5,7 +5,7 @@ let spacing = 40;
 
 let startX = 0;
 let startY = 0;
-let moveSpeed = 250;
+let moveSpeed = 100;
 
 let worldWidth = 3000;
 let worldHeight = 2000;
@@ -17,6 +17,10 @@ let bgm;
 
 let lost;
 
+let targetX = 0; //
+let targetY = 0; //
+
+
 function preload(){
   bgm = loadSound("assets/sounds/Jcy East - 星际穿越（钢琴版）.mp3")
   lost = loadSound("assets/sounds/lost.m4a")
@@ -25,6 +29,9 @@ function preload(){
 function setup() {
   let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
+  startX = targetX;//
+  startY = targetY;//
+
   bgm.play();
   if (!lost.isPlaying()) {
     lost.play(); 
@@ -46,6 +53,10 @@ function setup() {
 
 function draw() {
   background(10);
+
+  startX = lerp(startX, targetX, 0.1);//
+  startY = lerp(startY, targetY, 0.1);//
+
 
   console.log("...", verticalLines.length)
 
@@ -86,16 +97,17 @@ function draw() {
 }
 
 function keyPressed() {
- if (key == "a"){
-  startX += moveSpeed;
- }else if(key == "d"){
-  startX -= moveSpeed;
- }else if(key == "w"){
-  startY += moveSpeed;
- }else if(key == "s"){
-  startY -= moveSpeed;
- }
+  if (key == "a") {
+    targetX += moveSpeed;
+  } else if (key == "d") {
+    targetX -= moveSpeed;
+  } else if (key == "w") {
+    targetY += moveSpeed;
+  } else if (key == "s") {
+    targetY -= moveSpeed;
+  }
 }
+
 
 
 
