@@ -7,7 +7,7 @@ let bgm;
 
 function preload(){
   img = loadImage("assets/FJ9wsE_UUAAV7Ed.jpg_large")
-  bo = loadImage("assets/books-3981515_640.webp")
+  bo = loadImage("assets/books-3981515_640.png")
   books = loadSound("assets/sounds/books.m4a")
   bgm = loadSound ("assets/sounds/Our Last Hope Lost Hope - Dagsvärk ／ The Underpass.mp3")
 }
@@ -39,19 +39,21 @@ function draw() {
   pop();
 
   // bookshelf();
-  book1();
-  book2();
-  book3();
-  if(mouseX>=85 && mouseX<= 105 && mouseY>= 80 && mouseY <= 145){
+  // book1();
+  // book2();
+  // book3();
+  if(mouseX>=115 && mouseX<= 135 && mouseY>= 90 && mouseY <= 146){
     cursor(HAND);
     console.log(5)
-  }else if(mouseX >= 480 &&mouseX <= 490 && mouseY >=70 && mouseY<= 145){
+  }else if(mouseX >= 455 &&mouseX <= 470 && mouseY >=325 && mouseY<= 365){
     cursor(HAND);
   }else{
     cursor(ARROW);
   }
 
   image(bo,75,60,455,420);
+
+
 }
 
 function bookshelf(){
@@ -62,8 +64,10 @@ function bookshelf(){
   rect(75,40,10,420)
   rect(515,40,10,420)
   rect(85,145,430,10)
-  rect(85,250,430,10)
-  rect(85,355,430,10)
+  rect(85,217,430,10)
+  rect(85,290,430,10)
+  rect(85,365,430,10) 
+  rect(85,445,430,10)
   // fill(100,0,0)
 
 
@@ -71,18 +75,25 @@ function bookshelf(){
   triangle(670,250,800,40,800,460)
 
   fill(0,0,100)
-  triangle(525,145,670,250,525,155)
-  triangle(525,250,670,250,525,260)
-  triangle(525,355,670,250,525,365)
-  triangle(670,250,800,145,800,155)
-  triangle(670,250,800,250,800,260)
-  triangle(670,250,800,355,800,365)
+  triangle(525,70,670,250,525,145)
+  triangle(525,155,670,250,525,217)
+  triangle(525,227,670,250,525,290)
+  triangle(525,300,670,250,525,365)
+  triangle(525,375,670,250,525,445)
+
+  triangle(670,250,800,70,800,145)
+  triangle(670,250,800,155,800,217)
+  triangle(670,250,800,227,800,290)
+  triangle(670,250,800,300,800,365)
+  triangle(670,250,800,375,800,445)
+
+
 }
 
 function book1(){ //have interactive content
 fill(34, 47, 62)
 rect(85,80,20,65) //book1
-rect(480,70,10,75) //book4
+rect(455,325,15,40) //book4
 }
 
 function book2(){ //blank but can type into
@@ -94,7 +105,7 @@ rect(105,100,10,45) //book2
 
 function book3(){ // garbage website
 fill(111, 78, 163)
-rect(115,55,15,90) //book3
+rect(115,90,20,56) //book3
 }
 
 function light(){
@@ -102,12 +113,12 @@ function light(){
 }
 
 function mousePressed(){
-  if(mouseX>=85 && mouseX<= 105 && mouseY>= 80 && mouseY <= 145){
+  if(mouseX>=115 && mouseX<= 135 && mouseY>= 90 && mouseY <= 146){
     window.location.href = "../1 flower";
     cursor(HAND);
   }
-  if(mouseX >= 480 &&mouseX <= 490 && mouseY >=70 && mouseY<= 145){
-    window.location.href = "../1 rain";
+  if(mouseX >= 455 &&mouseX <= 470 && mouseY >=325 && mouseY<= 365){
+    window.location.href = "../1 wholerain";
   }
 }
 

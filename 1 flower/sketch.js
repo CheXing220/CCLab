@@ -127,6 +127,11 @@ function drawSand() {
 }
 
 function mousePressed() {
+
+  if(mouseX>=10 && mouseX <= 80 && mouseY >= 10 && mouseY <= 50){
+    window.location.href = "../1 bookshelf";
+  }
+
   let radius = 20;
 
   for (let i = sandMounds.length - 1; i >= 0; i--) {
@@ -283,8 +288,3 @@ class SandMound {
   }
 }
 
-function mousePressed(){
-  if(mouseX>=10 && mouseX <= 80 && mouseY >= 10 && mouseY <= 50){
-    window.location.href = "../1 bookshelf";
-  }
-}

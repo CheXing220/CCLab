@@ -14,23 +14,31 @@ let Ex = 2000;
 let Ey = 1000;
 
 let bgm;
+let img;
 
 let lost;
 
 let targetX = 0; //
 let targetY = 0; //
 
+let startTime;
+
 
 function preload(){
   bgm = loadSound("assets/sounds/Jcy East - 星际穿越（钢琴版）.mp3")
   lost = loadSound("assets/sounds/lost.m4a")
+  img = loadImage("assets/Find something in the matrix to get you out.png")
 }
 
 function setup() {
   let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
-  startX = targetX;//
-  startY = targetY;//
+
+  startTime = millis();
+
+  startX = targetX;
+  startY = targetY;
+
 
   bgm.play();
   if (!lost.isPlaying()) {
@@ -54,8 +62,9 @@ function setup() {
 function draw() {
   background(10);
 
-  startX = lerp(startX, targetX, 0.1);//
-  startY = lerp(startY, targetY, 0.1);//
+
+  startX = lerp(startX, targetX, 0.1);
+  startY = lerp(startY, targetY, 0.1);
 
 
   console.log("...", verticalLines.length)
@@ -88,9 +97,20 @@ function draw() {
   pop();
 
 
-   if (millis() >= 5000){
-    console.log("show")
-   }
+
+    if (millis() - startTime < 5000) {
+      image(img,0,0,width,height)
+    }
+  
+  let worldMouseX = mouseX - startX;
+  let worldMouseY = mouseY - startY;
+  let d = dist(worldMouseX, worldMouseY, Ex, Ey);
+
+  if (d < 15) {
+    cursor(HAND);
+  } else {
+    cursor(ARROW);
+  }
 
   
 
