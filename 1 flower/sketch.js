@@ -17,28 +17,14 @@ function preload(){
   img3 = loadImage("assets/return-button-icon-13.jpg")
   bgm = loadSound("assets/sounds/坂本龍一 - Energy Flow.mp3")
 }
-// let content = '花香渐渐消逝远去…… '
-// let yStart = 0;
-// let customFont;
 
-
-// function preload() {
-//   customFont = loadFont('assets/花香渐渐消逝远去......txt'); 
-// }
-
-
-
-// }
 function setup() {
   let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
   if (!bgm.isPlaying()) {
     bgm.loop(); 
   }
-  // image(img1,0,0,width,height)
-  // image(img2,0,0,width,height)
 
-  // image(img3,0,0,width,height)
   sandBaseY = height - 100;
   for (let i = 0; i < width; i++) {
     sandHeightMap[i] = sandBaseY + noise(i * 0.02) * 20;
@@ -46,9 +32,7 @@ function setup() {
   for (let i = 0; i < 80; i++) {
     petals.push(new Petal());
   }
-  // textFont(customFont);
-  // textAlign(CENTER, CENTER);
-  // textSize(20);
+
 }
 
 function draw() {
@@ -60,20 +44,6 @@ function draw() {
 
   image(img3,0,0,width/10,height/8.5)
 
-
-// if (millis() >= 5000){
-//   console.log("show")
-//   image(img2,500,0)
-//  }
-
-
-
-
-  // for (let y = yStart; y < height; y += 28) { //use a for loop to draw the line of text multiple times down the vertical axis
-  //   fill(255, y / 2 + 55, 100); //create a gradient by associating the fill color with the y location of the text
-  //   text(content, width / 2, y); //display text
-  // }
-  // yStart--; //move the starting point of the loop up to create the scrolling animation, yStart-- is the same as yStart = yStart -1 or yStart-=1
 
 
 
@@ -166,7 +136,7 @@ function mousePressed() {
   sandMounds.push(new SandMound(moundX, mouseX));
 }
 
-// Petal class
+
 class Petal {
   constructor() {
     this.reset();
@@ -204,7 +174,7 @@ class Petal {
   }
 }
 
-// Sand Puff
+
 class SandPuff {
   constructor(positionX, positionY) {
     this.particles = [];
@@ -241,7 +211,7 @@ class SandPuff {
   }
 }
 
-// Sand Mound
+
 class SandMound {
   constructor(positionX, targetPositionX) {
     this.positionX = positionX;
